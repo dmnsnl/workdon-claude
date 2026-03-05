@@ -37,13 +37,13 @@ export function BrowseMenu() {
                 </p>
                 <ul className="space-y-0.5">
                   {LOCATIONS.slice(0, 6).map((loc) => (
-                    <li key={loc}>
+                    <li key={loc.suburb}>
                       <NavigationMenuLink asChild>
                         <Link
-                          href={`/search?type=projects&location=${encodeURIComponent(loc)}`}
+                          href={`/search?type=projects&location=${encodeURIComponent(loc.suburb)}`}
                           className="block rounded-sm px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
-                          {loc}
+                          {loc.label}
                         </Link>
                       </NavigationMenuLink>
                     </li>
@@ -125,13 +125,13 @@ export function BrowseMenu() {
                 </p>
                 <ul className="space-y-0.5">
                   {LOCATIONS.slice(0, 6).map((loc) => (
-                    <li key={loc}>
+                    <li key={loc.suburb}>
                       <NavigationMenuLink asChild>
                         <Link
-                          href={`/search?type=companies&location=${encodeURIComponent(loc)}`}
+                          href={`/search?type=companies&location=${encodeURIComponent(loc.suburb)}`}
                           className="block rounded-sm px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
-                          {loc}
+                          {loc.label}
                         </Link>
                       </NavigationMenuLink>
                     </li>
@@ -159,13 +159,13 @@ export function BrowseMenu() {
                 </p>
                 <ul className="space-y-0.5">
                   {LOCATIONS.slice(0, 6).map((loc) => (
-                    <li key={loc}>
+                    <li key={loc.suburb}>
                       <NavigationMenuLink asChild>
                         <Link
-                          href={`/search?type=people&location=${encodeURIComponent(loc)}`}
+                          href={`/search?type=people&location=${encodeURIComponent(loc.suburb)}`}
                           className="block rounded-sm px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
-                          {loc}
+                          {loc.label}
                         </Link>
                       </NavigationMenuLink>
                     </li>

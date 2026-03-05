@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { SiteHeader } from "@/components/shared/site-header";
 import { SiteFooter } from "@/components/shared/site-footer";
 import { ProjectCard } from "@/components/shared/project-card";
+import { formatLocationShort } from "@/lib/location";
 
 export async function generateMetadata({
   params,
@@ -140,8 +141,10 @@ export default async function CompanyProfilePage({
             <h1 className="text-3xl font-bold tracking-tight">
               {company.name}
             </h1>
-            {company.location && (
-              <p className="text-muted-foreground">{company.location}</p>
+            {company.suburb && (
+              <p className="text-muted-foreground">
+                {formatLocationShort({ suburb: company.suburb, state: company.state || "", country: company.country })}
+              </p>
             )}
             <div className="mt-2 flex flex-wrap gap-1.5">
               {company.sectors.map((s) => (
@@ -296,7 +299,9 @@ export default async function CompanyProfilePage({
                     slug={project.slug}
                     title={project.title}
                     heroImageUrl={project.heroImageUrl}
-                    location={project.location}
+                    suburb={project.suburb}
+                    state={project.state}
+                    country={project.country}
                     completionYear={project.completionYear}
                     budgetBand={project.budgetBand}
                     sectorTags={project.sectorTags}

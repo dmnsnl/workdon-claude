@@ -104,16 +104,66 @@ export function SettingsForm({ company }: Props) {
                 </p>
               )}
             </div>
+          </div>
+
+          {/* Location */}
+          <fieldset className="space-y-4 rounded-lg border p-4">
+            <legend className="text-sm font-medium px-1">Location</legend>
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="streetAddress">Street address (optional)</Label>
               <Input
-                id="location"
-                name="location"
-                defaultValue={company.location ?? ""}
-                placeholder="e.g. Sydney, NSW"
+                id="streetAddress"
+                name="streetAddress"
+                defaultValue={company.streetAddress ?? ""}
+                placeholder="e.g. 100 Barangaroo Ave"
               />
             </div>
-          </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="suburb">Suburb / City</Label>
+                <Input
+                  id="suburb"
+                  name="suburb"
+                  defaultValue={company.suburb ?? ""}
+                  placeholder="e.g. Sydney"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  name="state"
+                  defaultValue={company.state ?? ""}
+                  placeholder="e.g. NSW"
+                />
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="postcode">Postcode (optional)</Label>
+                <Input
+                  id="postcode"
+                  name="postcode"
+                  defaultValue={company.postcode ?? ""}
+                  placeholder="e.g. 2000"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <select
+                  id="country"
+                  name="country"
+                  defaultValue={company.country ?? "AU"}
+                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                >
+                  <option value="AU">Australia</option>
+                  <option value="NZ">New Zealand</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="USA">United States</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
 
           <div className="space-y-2">
             <Label htmlFor="primaryColor">Brand colour</Label>

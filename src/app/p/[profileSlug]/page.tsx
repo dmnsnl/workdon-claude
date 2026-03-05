@@ -15,6 +15,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SiteHeader } from "@/components/shared/site-header";
 import { SiteFooter } from "@/components/shared/site-footer";
+import { formatLocationShort } from "@/lib/location";
 
 const BUDGET_LABELS: Record<string, string> = {
   UNDER_1M: "Under $1M",
@@ -200,7 +201,7 @@ export default async function CapabilityProfilePage({
                           )}
                         </CardTitle>
                         <CardDescription>
-                          {proj.location} &middot; {proj.completionYear}
+                          {formatLocationShort(proj)} &middot; {proj.completionYear}
                         </CardDescription>
                       </CardHeader>
                       <CardContent>

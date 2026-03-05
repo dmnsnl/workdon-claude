@@ -22,6 +22,7 @@ import {
   creditCategoryLabel,
   stakeholderLabel,
 } from "@/lib/project-details";
+import { formatLocationShort, formatLocationFull } from "@/lib/location";
 
 export async function generateMetadata({
   params,
@@ -42,7 +43,7 @@ export async function generateMetadata({
   }
   return {
     title: project.title,
-    description: `${project.title} by ${project.company.name} — ${project.location}`,
+    description: `${project.title} by ${project.company.name} — ${formatLocationShort(project)}`,
   };
 }
 
@@ -145,7 +146,7 @@ export default async function ProjectDetailPage({
           publishStatus: "PUBLIC",
           isConfidential: false,
           id: { not: project.id },
-          location: { contains: project.location.split(",")[0] },
+          suburb: { equals: project.suburb, mode: "insensitive" },
         },
         include: { company: { select: { name: true, slug: true } } },
         orderBy: { viewCount: "desc" },
@@ -222,7 +223,7 @@ export default async function ProjectDetailPage({
                 variant="secondary"
                 className="bg-white/20 text-white text-sm border-0"
               >
-                {project.location}
+                {formatLocationShort(project)}
               </Badge>
               <Badge
                 variant="secondary"
@@ -272,7 +273,7 @@ export default async function ProjectDetailPage({
             {project.title}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-muted-foreground">
-            <span>{project.location}</span>
+            <span>{formatLocationShort(project)}</span>
             <span>&middot;</span>
             <span>{project.completionYear}</span>
             <span>&middot;</span>
@@ -296,6 +297,9 @@ export default async function ProjectDetailPage({
         {/* Description & Scope */}
         <section>
           <h2 className="text-xl font-bold tracking-tight">About This Project</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {formatLocationFull(project)}
+          </p>
           <p className="mt-2 whitespace-pre-line text-muted-foreground">
             {project.scopeSummary}
           </p>
@@ -591,7 +595,9 @@ export default async function ProjectDetailPage({
                         slug={p.slug}
                         title={p.title}
                         heroImageUrl={p.heroImageUrl}
-                        location={p.location}
+                        suburb={p.suburb}
+                        state={p.state}
+                        country={p.country}
                         completionYear={p.completionYear}
                         budgetBand={p.budgetBand}
                         sectorTags={p.sectorTags}
@@ -613,7 +619,9 @@ export default async function ProjectDetailPage({
                         slug={p.slug}
                         title={p.title}
                         heroImageUrl={p.heroImageUrl}
-                        location={p.location}
+                        suburb={p.suburb}
+                        state={p.state}
+                        country={p.country}
                         completionYear={p.completionYear}
                         budgetBand={p.budgetBand}
                         sectorTags={p.sectorTags}
@@ -636,7 +644,9 @@ export default async function ProjectDetailPage({
                         slug={p.slug}
                         title={p.title}
                         heroImageUrl={p.heroImageUrl}
-                        location={p.location}
+                        suburb={p.suburb}
+                        state={p.state}
+                        country={p.country}
                         completionYear={p.completionYear}
                         budgetBand={p.budgetBand}
                         sectorTags={p.sectorTags}

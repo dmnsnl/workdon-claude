@@ -19,6 +19,7 @@ import { CompanyCard } from "@/components/shared/company-card";
 import { FeaturedCarousel } from "@/components/home/featured-carousel";
 import { budgetBandLabel } from "@/lib/project-details";
 import { LOCATIONS, SECTORS } from "@/lib/search-constants";
+import { formatLocationShort } from "@/lib/location";
 
 export default async function HomePage() {
   const [
@@ -166,7 +167,9 @@ export default async function HomePage() {
                 slug: p.slug,
                 title: p.title,
                 heroImageUrl: p.heroImageUrl,
-                location: p.location,
+                suburb: p.suburb,
+                state: p.state,
+                country: p.country,
                 completionYear: p.completionYear,
                 budgetBand: p.budgetBand,
                 sectorTags: p.sectorTags,
@@ -211,7 +214,7 @@ export default async function HomePage() {
                     </p>
                     <div className="mt-4 flex flex-wrap gap-1.5">
                       <Badge variant="outline">
-                        {spotlightProject.location}
+                        {formatLocationShort(spotlightProject)}
                       </Badge>
                       <Badge variant="outline">
                         {spotlightProject.completionYear}
@@ -250,7 +253,9 @@ export default async function HomePage() {
                   slug={project.slug}
                   title={project.title}
                   heroImageUrl={project.heroImageUrl}
-                  location={project.location}
+                  suburb={project.suburb}
+                  state={project.state}
+                  country={project.country}
                   completionYear={project.completionYear}
                   budgetBand={project.budgetBand}
                   sectorTags={project.sectorTags}
@@ -279,7 +284,9 @@ export default async function HomePage() {
                   slug={project.slug}
                   title={project.title}
                   heroImageUrl={project.heroImageUrl}
-                  location={project.location}
+                  suburb={project.suburb}
+                  state={project.state}
+                  country={project.country}
                   completionYear={project.completionYear}
                   budgetBand={project.budgetBand}
                   sectorTags={project.sectorTags}
@@ -302,14 +309,14 @@ export default async function HomePage() {
               <div className="flex flex-wrap gap-2">
                 {LOCATIONS.map((loc) => (
                   <Link
-                    key={loc}
-                    href={`/search?type=projects&location=${encodeURIComponent(loc)}`}
+                    key={loc.suburb}
+                    href={`/search?type=projects&location=${encodeURIComponent(loc.suburb)}`}
                   >
                     <Badge
                       variant="outline"
                       className="cursor-pointer hover:bg-foreground hover:text-background transition-colors px-3 py-1"
                     >
-                      {loc}
+                      {loc.label}
                     </Badge>
                   </Link>
                 ))}
@@ -357,7 +364,9 @@ export default async function HomePage() {
                   name={company.name}
                   logoUrl={company.logoUrl}
                   primaryColor={company.primaryColor}
-                  location={company.location}
+                  suburb={company.suburb}
+                  state={company.state}
+                  country={company.country}
                   sectors={company.sectors}
                   projectCount={company._count.projects}
                   viewCount={company.viewCount}

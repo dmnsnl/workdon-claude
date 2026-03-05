@@ -130,16 +130,38 @@ const SUBCONTRACTOR_TRADES = [
   "Waterproofing", "Demolition", "Scaffolding", "Carpentry", "Joinery",
 ];
 
-const AU_LOCATIONS = [
-  "Sydney, NSW", "Melbourne, VIC", "Brisbane, QLD", "Perth, WA",
-  "Adelaide, SA", "Gold Coast, QLD", "Hobart, TAS", "Canberra, ACT",
+interface SeedLocation {
+  suburb: string;
+  state: string;
+  country: string;
+  label: string;
+}
+
+const AU_LOCATIONS: SeedLocation[] = [
+  { suburb: "Sydney", state: "NSW", country: "AU", label: "Sydney, NSW" },
+  { suburb: "Melbourne", state: "VIC", country: "AU", label: "Melbourne, VIC" },
+  { suburb: "Brisbane", state: "QLD", country: "AU", label: "Brisbane, QLD" },
+  { suburb: "Perth", state: "WA", country: "AU", label: "Perth, WA" },
+  { suburb: "Adelaide", state: "SA", country: "AU", label: "Adelaide, SA" },
+  { suburb: "Gold Coast", state: "QLD", country: "AU", label: "Gold Coast, QLD" },
+  { suburb: "Hobart", state: "TAS", country: "AU", label: "Hobart, TAS" },
+  { suburb: "Canberra", state: "ACT", country: "AU", label: "Canberra, ACT" },
 ];
 
-const NZ_LOCATIONS = ["Auckland, NZ", "Wellington, NZ"];
-const UK_LOCATIONS = ["London, UK", "Manchester, UK"];
-const US_LOCATIONS = ["Los Angeles, USA", "New York, USA"];
+const NZ_LOCATIONS: SeedLocation[] = [
+  { suburb: "Auckland", state: "", country: "NZ", label: "Auckland, NZ" },
+  { suburb: "Wellington", state: "", country: "NZ", label: "Wellington, NZ" },
+];
+const UK_LOCATIONS: SeedLocation[] = [
+  { suburb: "London", state: "", country: "UK", label: "London, UK" },
+  { suburb: "Manchester", state: "", country: "UK", label: "Manchester, UK" },
+];
+const US_LOCATIONS: SeedLocation[] = [
+  { suburb: "Los Angeles", state: "", country: "USA", label: "Los Angeles, USA" },
+  { suburb: "New York", state: "", country: "USA", label: "New York, USA" },
+];
 
-function randomProjectLocation(): string {
+function randomProjectLocation(): SeedLocation {
   const r = Math.random();
   if (r < 0.70) return pick(AU_LOCATIONS);
   if (r < 0.80) return pick(NZ_LOCATIONS);
@@ -169,7 +191,9 @@ const TRADE_TO_COMPANY_SLUG: Record<string, string> = {
 interface CompanyDef {
   name: string;
   type: "tier1" | "midtier" | "subcontractor" | "consultant" | "developer" | "govclient";
-  location: string;
+  suburb: string;
+  state: string;
+  country: string;
   sectors: string[];
   trades: string[];
   primaryColor: string;
@@ -180,7 +204,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Westfield Build Group",
     type: "tier1",
-    location: "Sydney, NSW",
+    suburb: "Sydney", state: "NSW", country: "AU",
     sectors: ["Commercial", "Infrastructure"],
     trades: ["General Construction"],
     primaryColor: "#1a1a2e",
@@ -189,7 +213,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Paramount Constructions",
     type: "tier1",
-    location: "Melbourne, VIC",
+    suburb: "Melbourne", state: "VIC", country: "AU",
     sectors: ["Commercial", "Residential"],
     trades: ["General Construction"],
     primaryColor: "#16213e",
@@ -198,7 +222,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Atlas Infrastructure Partners",
     type: "tier1",
-    location: "Brisbane, QLD",
+    suburb: "Brisbane", state: "QLD", country: "AU",
     sectors: ["Infrastructure", "Civil"],
     trades: ["Civil Engineering"],
     primaryColor: "#0f3460",
@@ -207,7 +231,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Coastal Building Co",
     type: "midtier",
-    location: "Gold Coast, QLD",
+    suburb: "Gold Coast", state: "QLD", country: "AU",
     sectors: ["Residential", "Commercial"],
     trades: ["General Construction", "Fitout"],
     primaryColor: "#2c3e50",
@@ -216,7 +240,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Southern Cross Constructions",
     type: "midtier",
-    location: "Adelaide, SA",
+    suburb: "Adelaide", state: "SA", country: "AU",
     sectors: ["Commercial", "Education"],
     trades: ["General Construction"],
     primaryColor: "#34495e",
@@ -225,7 +249,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Harbour City Projects",
     type: "midtier",
-    location: "Sydney, NSW",
+    suburb: "Sydney", state: "NSW", country: "AU",
     sectors: ["Residential", "Mixed-Use"],
     trades: ["General Construction", "High-Rise"],
     primaryColor: "#2d3436",
@@ -234,7 +258,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "ProTile Solutions",
     type: "subcontractor",
-    location: "Melbourne, VIC",
+    suburb: "Melbourne", state: "VIC", country: "AU",
     sectors: ["Subcontracting"],
     trades: ["Tiling", "Waterproofing"],
     primaryColor: "#636e72",
@@ -243,7 +267,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Apex Roofing & Cladding",
     type: "subcontractor",
-    location: "Perth, WA",
+    suburb: "Perth", state: "WA", country: "AU",
     sectors: ["Subcontracting"],
     trades: ["Roofing", "Metal Cladding"],
     primaryColor: "#4a4a4a",
@@ -252,7 +276,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Premier Plastering",
     type: "subcontractor",
-    location: "Sydney, NSW",
+    suburb: "Sydney", state: "NSW", country: "AU",
     sectors: ["Subcontracting"],
     trades: ["Plastering", "Rendering"],
     primaryColor: "#555555",
@@ -261,7 +285,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Steelform Structural",
     type: "subcontractor",
-    location: "Brisbane, QLD",
+    suburb: "Brisbane", state: "QLD", country: "AU",
     sectors: ["Subcontracting"],
     trades: ["Structural Steel", "Fabrication"],
     primaryColor: "#3d3d3d",
@@ -270,7 +294,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Elite Electrical Services",
     type: "subcontractor",
-    location: "Melbourne, VIC",
+    suburb: "Melbourne", state: "VIC", country: "AU",
     sectors: ["Subcontracting"],
     trades: ["Electrical", "Fire Protection"],
     primaryColor: "#4b4b4b",
@@ -279,7 +303,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "AquaFlow Plumbing",
     type: "subcontractor",
-    location: "Adelaide, SA",
+    suburb: "Adelaide", state: "SA", country: "AU",
     sectors: ["Subcontracting"],
     trades: ["Plumbing", "Hydraulic Services"],
     primaryColor: "#5a5a5a",
@@ -288,7 +312,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Darling Architects",
     type: "consultant",
-    location: "Sydney, NSW",
+    suburb: "Sydney", state: "NSW", country: "AU",
     sectors: ["Architecture"],
     trades: ["Architecture", "Interior Design"],
     primaryColor: "#2c2c2c",
@@ -297,7 +321,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Structural Dynamics Engineering",
     type: "consultant",
-    location: "Melbourne, VIC",
+    suburb: "Melbourne", state: "VIC", country: "AU",
     sectors: ["Engineering"],
     trades: ["Structural Engineering"],
     primaryColor: "#383838",
@@ -306,7 +330,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Green Leaf Sustainability",
     type: "consultant",
-    location: "Brisbane, QLD",
+    suburb: "Brisbane", state: "QLD", country: "AU",
     sectors: ["Sustainability", "Consulting"],
     trades: ["ESD Consulting"],
     primaryColor: "#404040",
@@ -315,7 +339,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Pacific Project Management",
     type: "consultant",
-    location: "Perth, WA",
+    suburb: "Perth", state: "WA", country: "AU",
     sectors: ["Project Management"],
     trades: ["Project Management"],
     primaryColor: "#333333",
@@ -324,7 +348,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Horizon Property Group",
     type: "developer",
-    location: "Sydney, NSW",
+    suburb: "Sydney", state: "NSW", country: "AU",
     sectors: ["Development", "Residential"],
     trades: ["Property Development"],
     primaryColor: "#1a1a1a",
@@ -333,7 +357,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Metro Commercial Developments",
     type: "developer",
-    location: "Melbourne, VIC",
+    suburb: "Melbourne", state: "VIC", country: "AU",
     sectors: ["Development", "Commercial"],
     trades: ["Property Development"],
     primaryColor: "#262626",
@@ -342,7 +366,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Queensland Health Infrastructure",
     type: "govclient",
-    location: "Brisbane, QLD",
+    suburb: "Brisbane", state: "QLD", country: "AU",
     sectors: ["Government", "Health"],
     trades: ["Government Infrastructure"],
     primaryColor: "#2f2f2f",
@@ -351,7 +375,7 @@ const COMPANIES: CompanyDef[] = [
   {
     name: "Te Ara Development Trust",
     type: "developer",
-    location: "Auckland, NZ",
+    suburb: "Auckland", state: "", country: "NZ",
     sectors: ["Development", "Community"],
     trades: ["Community Development"],
     primaryColor: "#3a3a3a",
@@ -475,7 +499,7 @@ async function main() {
   // ── Create Companies ─────────────────────────────────
 
   console.log("Creating 20 companies...");
-  const companyRecords: Record<string, { id: string; slug: string; name: string; type: string; location: string }> = {};
+  const companyRecords: Record<string, { id: string; slug: string; name: string; type: string; suburb: string; state: string; country: string }> = {};
 
   for (const def of COMPANIES) {
     const slug = slugify(def.name);
@@ -484,7 +508,9 @@ async function main() {
         name: def.name,
         slug,
         description: def.description,
-        location: def.location,
+        suburb: def.suburb,
+        state: def.state,
+        country: def.country,
         primaryColor: def.primaryColor,
         sectors: def.sectors,
         trades: def.trades,
@@ -494,7 +520,7 @@ async function main() {
         planTier: "FREE",
       },
     });
-    companyRecords[slug] = { id: company.id, slug, name: def.name, type: def.type, location: def.location };
+    companyRecords[slug] = { id: company.id, slug, name: def.name, type: def.type, suburb: def.suburb, state: def.state, country: def.country };
   }
   console.log("20 companies created.");
 
@@ -507,7 +533,7 @@ async function main() {
   // ── Create Projects ──────────────────────────────────
 
   console.log("Creating projects...");
-  const allProjects: Array<{ id: string; title: string; companyId: string; companySlug: string; companyName: string; location: string; companyType: string }> = [];
+  const allProjects: Array<{ id: string; title: string; companyId: string; companySlug: string; companyName: string; suburb: string; state: string; country: string; companyType: string }> = [];
   let featuredCount = 0;
   let spotlightAssigned = false;
   let globalProjectIndex = 0;
@@ -558,10 +584,10 @@ async function main() {
 
     for (let i = 0; i < projectCount; i++) {
       const template = templates[i % templates.length];
-      const location = randomProjectLocation();
+      const loc = randomProjectLocation();
       const parentBuilder = pick(builderCompanies);
       const title = template.titleTemplate
-        .replace("{location}", location.split(",")[0])
+        .replace("{location}", loc.suburb)
         .replace("{parent}", parentBuilder.name);
       const slug = slugify(title) + "-" + (globalProjectIndex + 1);
       const completionYear = randomInt(2018, 2025);
@@ -577,7 +603,9 @@ async function main() {
           title,
           slug,
           client: pick(developerCompanies).name,
-          location,
+          suburb: loc.suburb,
+          state: loc.state,
+          country: loc.country,
           sectorTags: template.sectorTags,
           completionYear,
           budgetBand: pick(budgetBands),
@@ -600,7 +628,9 @@ async function main() {
         companyId: companyInfo.id,
         companySlug,
         companyName: def.name,
-        location,
+        suburb: loc.suburb,
+        state: loc.state,
+        country: loc.country,
         companyType: def.type,
       });
       globalProjectIndex++;
@@ -854,7 +884,7 @@ async function main() {
         const skills = pickN(SKILLS_BY_ROLE[roleCat] || SKILLS_BY_ROLE.BUILDER, randomInt(4, 7));
         const yearsExp = randomInt(3, 30);
         const headline = `${roleTitle} | ${proj.companyName}`;
-        const bio = `${fullName} is a ${roleTitle.toLowerCase()} with ${yearsExp} years of experience in the Australian construction industry. Specialising in ${creditDef.tradeGroup || roleCat.toLowerCase().replace("_", " ")}, ${firstName} has contributed to numerous projects across ${proj.location.split(",")[0]} and surrounding regions.`;
+        const bio = `${fullName} is a ${roleTitle.toLowerCase()} with ${yearsExp} years of experience in the Australian construction industry. Specialising in ${creditDef.tradeGroup || roleCat.toLowerCase().replace("_", " ")}, ${firstName} has contributed to numerous projects across ${proj.suburb} and surrounding regions.`;
 
         // Determine a linked company
         let linkedCompanyId: string | null = null;
@@ -899,7 +929,7 @@ async function main() {
             headline,
             bio,
             roleTitle,
-            location: proj.location,
+            location: proj.country === "AU" && proj.state ? `${proj.suburb}, ${proj.state}` : `${proj.suburb}, ${proj.country}`,
             yearsExperience: yearsExp,
             skills,
           },

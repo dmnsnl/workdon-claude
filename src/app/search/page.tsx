@@ -17,6 +17,8 @@ import { ProjectCard } from "@/components/shared/project-card";
 import { CompanyCard } from "@/components/shared/company-card";
 import { SearchFilters } from "@/components/shared/search-filters";
 import { MobileFilterSheet } from "@/components/shared/mobile-filter-sheet";
+import { SearchMapToggle } from "@/components/shared/search-map-toggle";
+import { formatLocationShort } from "@/lib/location";
 import { EXPERIENCE_RANGES } from "@/lib/search-constants";
 
 interface SearchParams {
@@ -29,6 +31,7 @@ interface SearchParams {
   trade?: string;
   experience?: string;
   sort?: string;
+  view?: string;
 }
 
 export default async function SearchPage({
@@ -64,12 +67,12 @@ export default async function SearchPage({
   if (textWhere) {
     projectWhere.OR = [
       { title: textWhere },
-      { location: textWhere },
+      { suburb: textWhere },
       { scopeSummary: textWhere },
     ];
   }
   if (location) {
-    projectWhere.location = {
+    projectWhere.suburb = {
       contains: location,
       mode: "insensitive" as const,
     };
@@ -93,10 +96,10 @@ export default async function SearchPage({
   const companyWhere: Record<string, unknown> = {};
 
   if (textWhere) {
-    companyWhere.OR = [{ name: textWhere }, { location: textWhere }];
+    companyWhere.OR = [{ name: textWhere }, { suburb: textWhere }];
   }
   if (location) {
-    companyWhere.location = {
+    companyWhere.suburb = {
       contains: location,
       mode: "insensitive" as const,
     };
@@ -233,6 +236,17 @@ export default async function SearchPage({
           <div>
             {activeType === "projects" && (
               <>
+                <SearchMapToggle
+                  markers={projects
+                    .filter((p) => p.latitude != null && p.longitude != null)
+                    .map((p) => ({
+                      lat: p.latitude!,
+                      lng: p.longitude!,
+                      title: p.title,
+                      href: `/projects/${p.slug}`,
+                      subtitle: formatLocationShort(p),
+                    }))}
+                />
                 {projects.length === 0 ? (
                   <p className="text-muted-foreground">No projects found.</p>
                 ) : (
@@ -243,7 +257,9 @@ export default async function SearchPage({
                         slug={project.slug}
                         title={project.title}
                         heroImageUrl={project.heroImageUrl}
-                        location={project.location}
+                        suburb={project.suburb}
+                        state={project.state}
+                        country={project.country}
                         completionYear={project.completionYear}
                         budgetBand={project.budgetBand}
                         sectorTags={project.sectorTags}
@@ -269,7 +285,9 @@ export default async function SearchPage({
                         name={company.name}
                         logoUrl={company.logoUrl}
                         primaryColor={company.primaryColor}
-                        location={company.location}
+                        suburb={company.suburb}
+                        state={company.state}
+                        country={company.country}
                         sectors={company.sectors}
                         projectCount={company._count.projects}
                         viewCount={company.viewCount}

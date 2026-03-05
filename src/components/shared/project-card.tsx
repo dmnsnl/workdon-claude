@@ -8,12 +8,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { budgetBandLabel } from "@/lib/project-details";
+import { formatLocationShort } from "@/lib/location";
 
 interface ProjectCardProps {
   slug: string;
   title: string;
   heroImageUrl: string | null;
-  location: string;
+  suburb: string;
+  state: string;
+  country: string;
   completionYear: number;
   budgetBand: string;
   sectorTags: string[];
@@ -25,7 +28,9 @@ export function ProjectCard({
   slug,
   title,
   heroImageUrl,
-  location,
+  suburb,
+  state,
+  country,
   completionYear,
   budgetBand,
   sectorTags,
@@ -48,7 +53,7 @@ export function ProjectCard({
           <CardTitle className="text-base line-clamp-2">{title}</CardTitle>
           <CardDescription>
             {companyName && <>{companyName} &middot; </>}
-            {location} &middot; {completionYear}
+            {formatLocationShort({ suburb, state, country })} &middot; {completionYear}
           </CardDescription>
         </CardHeader>
         <CardContent>

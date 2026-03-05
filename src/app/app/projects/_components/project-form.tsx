@@ -88,32 +88,80 @@ export function ProjectForm({
             )}
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="client">Client (optional)</Label>
-              <Input
-                id="client"
-                name="client"
-                defaultValue={project?.client ?? ""}
-                placeholder="e.g. Lendlease"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                required
-                defaultValue={project?.location}
-                placeholder="e.g. Brisbane, QLD"
-              />
-              {state.errors?.location && (
-                <p className="text-sm text-destructive">
-                  {state.errors.location}
-                </p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="client">Client (optional)</Label>
+            <Input
+              id="client"
+              name="client"
+              defaultValue={project?.client ?? ""}
+              placeholder="e.g. Lendlease"
+            />
           </div>
+
+          {/* Location */}
+          <fieldset className="space-y-4 rounded-lg border p-4">
+            <legend className="text-sm font-medium px-1">Location</legend>
+            <div className="space-y-2">
+              <Label htmlFor="streetAddress">Street address (optional)</Label>
+              <Input
+                id="streetAddress"
+                name="streetAddress"
+                defaultValue={project?.streetAddress ?? ""}
+                placeholder="e.g. 123 Eagle St"
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="suburb">Suburb / City</Label>
+                <Input
+                  id="suburb"
+                  name="suburb"
+                  required
+                  defaultValue={project?.suburb ?? ""}
+                  placeholder="e.g. Brisbane CBD"
+                />
+                {state.errors?.suburb && (
+                  <p className="text-sm text-destructive">
+                    {state.errors.suburb}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  name="state"
+                  defaultValue={project?.state ?? ""}
+                  placeholder="e.g. QLD"
+                />
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="postcode">Postcode (optional)</Label>
+                <Input
+                  id="postcode"
+                  name="postcode"
+                  defaultValue={project?.postcode ?? ""}
+                  placeholder="e.g. 4000"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="country">Country</Label>
+                <select
+                  id="country"
+                  name="country"
+                  defaultValue={project?.country ?? "AU"}
+                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                >
+                  <option value="AU">Australia</option>
+                  <option value="NZ">New Zealand</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="USA">United States</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">

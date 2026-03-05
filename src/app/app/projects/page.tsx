@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { formatLocationShort } from "@/lib/location";
 
 const BUDGET_LABELS: Record<string, string> = {
   UNDER_1M: "Under $1M",
@@ -64,7 +65,7 @@ export default async function ProjectsPage() {
                     </Link>
                   </CardTitle>
                   <CardDescription>
-                    {project.location} &middot; {project.completionYear}{" "}
+                    {formatLocationShort(project)} &middot; {project.completionYear}{" "}
                     &middot; {BUDGET_LABELS[project.budgetBand]}
                   </CardDescription>
                   <div className="flex flex-wrap gap-1.5 pt-1">

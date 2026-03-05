@@ -49,7 +49,9 @@ export default async function CompanyProjectsPage({
                 slug={project.slug}
                 title={project.title}
                 heroImageUrl={project.heroImageUrl}
-                location={project.location}
+                suburb={project.suburb}
+                state={project.state}
+                country={project.country}
                 completionYear={project.completionYear}
                 budgetBand={project.budgetBand}
                 sectorTags={project.sectorTags}

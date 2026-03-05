@@ -130,9 +130,15 @@ model Company {
   description  String?
   website      String?
   phone        String?
-  email        String?
-  location     String?
-  primaryColor String    @default("#0f172a") @map("primary_color")
+  email         String?
+  streetAddress String?       @map("street_address")
+  suburb        String?
+  state         String?
+  postcode      String?
+  country       String        @default("AU")
+  latitude      Float?
+  longitude     Float?
+  primaryColor  String        @default("#0f172a") @map("primary_color")
   planTier     PlanTier  @default(FREE) @map("plan_tier")
   sectors      String[]  @default([])
   trades       String[]  @default([])
@@ -150,6 +156,7 @@ model Company {
   roleExperiences RoleExperience[]
   caseStudies     ProjectCaseStudy[]
 
+  @@index([suburb])
   @@map("companies")
 }
 
@@ -181,7 +188,13 @@ model Project {
   title          String
   slug           String        @unique
   client         String?
-  location       String
+  streetAddress  String?       @map("street_address")
+  suburb         String        @default("")
+  state          String        @default("")
+  postcode       String?
+  country        String        @default("AU")
+  latitude       Float?
+  longitude      Float?
   sectorTags     String[]      @default([]) @map("sector_tags")
   completionYear Int           @map("completion_year")
   budgetBand     BudgetBand    @default(FROM_1M_TO_10M) @map("budget_band")
@@ -210,6 +223,8 @@ model Project {
   @@index([companyId, publishStatus, isConfidential])
   @@index([isFeatured])
   @@index([viewCount])
+  @@index([suburb])
+  @@index([country])
   @@map("projects")
 }
 

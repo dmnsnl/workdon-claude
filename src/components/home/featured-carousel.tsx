@@ -5,12 +5,15 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { budgetBandLabel } from "@/lib/project-details";
+import { formatLocationShort } from "@/lib/location";
 
 interface FeaturedProject {
   slug: string;
   title: string;
   heroImageUrl: string | null;
-  location: string;
+  suburb: string;
+  state: string;
+  country: string;
   completionYear: number;
   budgetBand: string;
   sectorTags: string[];
@@ -71,7 +74,7 @@ export function FeaturedCarousel({
                     variant="secondary"
                     className="bg-white/20 text-white text-xs border-0"
                   >
-                    {project.location}
+                    {formatLocationShort(project)}
                   </Badge>
                   <Badge
                     variant="secondary"

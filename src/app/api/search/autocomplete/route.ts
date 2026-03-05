@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { formatLocationShort } from "@/lib/location";
 
 export const dynamic = "force-dynamic";
 
@@ -18,26 +19,30 @@ export async function GET(request: NextRequest) {
         where: {
           publishStatus: "PUBLIC",
           isConfidential: false,
-          OR: [{ title: where }, { location: where }],
+          OR: [{ title: where }, { suburb: where }],
         },
         select: {
           id: true,
           title: true,
           slug: true,
-          location: true,
+          suburb: true,
+          state: true,
+          country: true,
         },
         orderBy: { viewCount: "desc" },
         take: 3,
       }),
       prisma.company.findMany({
         where: {
-          OR: [{ name: where }, { location: where }],
+          OR: [{ name: where }, { suburb: where }],
         },
         select: {
           id: true,
           name: true,
           slug: true,
-          location: true,
+          suburb: true,
+          state: true,
+          country: true,
         },
         orderBy: { viewCount: "desc" },
         take: 3,
@@ -63,14 +68,16 @@ export async function GET(request: NextRequest) {
         name: p.title,
         type: "Project" as const,
         href: `/projects/${p.slug}`,
-        subtitle: p.location,
+        subtitle: formatLocationShort(p),
       })),
       ...companies.map((c) => ({
         id: c.id,
         name: c.name,
         type: "Business" as const,
         href: `/c/${c.slug}`,
-        subtitle: c.location,
+        subtitle: c.suburb
+          ? formatLocationShort({ suburb: c.suburb, state: c.state || "", country: c.country })
+          : null,
       })),
       ...people.map((p) => ({
         id: p.id,

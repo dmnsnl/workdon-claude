@@ -1,19 +1,26 @@
-export const LOCATIONS = [
-  "Sydney, NSW",
-  "Melbourne, VIC",
-  "Brisbane, QLD",
-  "Perth, WA",
-  "Adelaide, SA",
-  "Gold Coast, QLD",
-  "Hobart, TAS",
-  "Canberra, ACT",
-  "Auckland, NZ",
-  "Wellington, NZ",
-  "London, UK",
-  "Manchester, UK",
-  "Los Angeles, USA",
-  "New York, USA",
-] as const;
+export interface LocationOption {
+  suburb: string;
+  state: string;
+  country: string;
+  label: string;
+}
+
+export const LOCATIONS: readonly LocationOption[] = [
+  { suburb: "Sydney", state: "NSW", country: "AU", label: "Sydney, NSW" },
+  { suburb: "Melbourne", state: "VIC", country: "AU", label: "Melbourne, VIC" },
+  { suburb: "Brisbane", state: "QLD", country: "AU", label: "Brisbane, QLD" },
+  { suburb: "Perth", state: "WA", country: "AU", label: "Perth, WA" },
+  { suburb: "Adelaide", state: "SA", country: "AU", label: "Adelaide, SA" },
+  { suburb: "Gold Coast", state: "QLD", country: "AU", label: "Gold Coast, QLD" },
+  { suburb: "Hobart", state: "TAS", country: "AU", label: "Hobart, TAS" },
+  { suburb: "Canberra", state: "ACT", country: "AU", label: "Canberra, ACT" },
+  { suburb: "Auckland", state: "", country: "NZ", label: "Auckland, NZ" },
+  { suburb: "Wellington", state: "", country: "NZ", label: "Wellington, NZ" },
+  { suburb: "London", state: "", country: "UK", label: "London, UK" },
+  { suburb: "Manchester", state: "", country: "UK", label: "Manchester, UK" },
+  { suburb: "Los Angeles", state: "", country: "USA", label: "Los Angeles, USA" },
+  { suburb: "New York", state: "", country: "USA", label: "New York, USA" },
+];
 
 export const SECTORS = [
   "Architecture",

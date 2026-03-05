@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { SiteHeader } from "@/components/shared/site-header";
 import { SiteFooter } from "@/components/shared/site-footer";
 import { creditCategoryLabel } from "@/lib/project-details";
+import { formatLocationShort } from "@/lib/location";
 
 export async function generateMetadata({
   params,
@@ -76,7 +77,9 @@ export default async function PersonalProfilePage({
           select: {
             title: true,
             slug: true,
-            location: true,
+            suburb: true,
+            state: true,
+            country: true,
             completionYear: true,
             heroImageUrl: true,
             publishStatus: true,
@@ -205,7 +208,7 @@ export default async function PersonalProfilePage({
                             >
                               {credit.project.company.name}
                             </Link>{" "}
-                            &middot; {credit.project.location} &middot;{" "}
+                            &middot; {formatLocationShort(credit.project)} &middot;{" "}
                             {credit.project.completionYear}
                           </CardDescription>
                         </div>

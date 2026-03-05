@@ -7,13 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { formatLocationShort } from "@/lib/location";
 
 interface CompanyCardProps {
   slug: string;
   name: string;
   logoUrl: string | null;
   primaryColor: string;
-  location: string | null;
+  suburb: string | null;
+  state: string | null;
+  country: string;
   sectors: string[];
   projectCount?: number;
   viewCount?: number;
@@ -24,7 +27,9 @@ export function CompanyCard({
   name,
   logoUrl,
   primaryColor,
-  location,
+  suburb,
+  state,
+  country,
   sectors,
   projectCount,
   viewCount,
@@ -50,9 +55,9 @@ export function CompanyCard({
             )}
             <div className="min-w-0">
               <CardTitle className="text-base truncate">{name}</CardTitle>
-              {location && (
+              {suburb && (
                 <CardDescription className="truncate">
-                  {location}
+                  {formatLocationShort({ suburb, state: state || "", country })}
                 </CardDescription>
               )}
             </div>

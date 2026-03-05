@@ -88,7 +88,7 @@ export function SearchFilters({ activeType }: SearchFiltersProps) {
         label="Location"
         value={searchParams.get("location") || ""}
         placeholder="Any location"
-        options={LOCATIONS.map((loc) => ({ value: loc, label: loc }))}
+        options={LOCATIONS.map((loc) => ({ value: loc.suburb, label: loc.label }))}
         onChange={(v) => updateFilter("location", v || null)}
       />
 
