@@ -1,0 +1,405 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum PlanTier {
+  FREE
+  STANDARD
+}
+
+enum AccountType {
+  COMPANY
+  PERSONAL
+}
+
+enum CompanyRole {
+  OWNER
+  EDITOR
+}
+
+enum PublishStatus {
+  PUBLIC
+  INTERNAL
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  UNLISTED
+}
+
+enum ProfileTemplate {
+  TEMPLATE_A
+  TEMPLATE_B
+  TEMPLATE_C
+}
+
+enum ProfileItemType {
+  SERVICE
+  PROJECT
+}
+
+enum StakeholderRole {
+  CLIENT
+  ARCHITECT
+  BUILDER
+  ENGINEER
+  CONSTRUCTION_MANAGER
+  OTHER
+}
+
+enum ProjectMediaType {
+  IMAGE
+  VIDEO
+}
+
+enum CreditRoleCategory {
+  CONSTRUCTION_MANAGER
+  ARCHITECT
+  BUILDER
+  ENGINEER
+  SUBCONTRACTOR
+  OTHER
+}
+
+enum CreditEntityType {
+  PERSON
+  BUSINESS
+}
+
+enum BudgetBand {
+  UNDER_1M
+  FROM_1M_TO_10M
+  FROM_10M_TO_50M
+  OVER_50M
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// ─── Auth ────────────────────────────────────────────────
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String       @map("password_hash")
+  name         String
+  accountType  AccountType  @map("account_type")
+  companyId    String?      @map("company_id")
+  companyRole  CompanyRole? @map("company_role")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  company         Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sessions        Session[]
+  personalProfile PersonalProfile?
+
+  @@index([companyId])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique @map("token_hash")
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ─── Company ─────────────────────────────────────────────
+
+model Company {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  logoUrl      String?  @map("logo_url")
+  description  String?
+  website      String?
+  phone        String?
+  email        String?
+  location     String?
+  primaryColor String    @default("#0f172a") @map("primary_color")
+  planTier     PlanTier  @default(FREE) @map("plan_tier")
+  sectors      String[]  @default([])
+  trades       String[]  @default([])
+  isUnclaimed  Boolean   @default(false) @map("is_unclaimed")
+  isFeatured   Boolean   @default(false) @map("is_featured")
+  viewCount    Int       @default(0) @map("view_count")
+  featuredAt   DateTime? @map("featured_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  users           User[]
+  services        Service[]
+  projects        Project[]
+  profiles        CapabilityProfile[]
+  roleExperiences RoleExperience[]
+  caseStudies     ProjectCaseStudy[]
+
+  @@map("companies")
+}
+
+// ─── Services ────────────────────────────────────────────
+
+model Service {
+  id             String        @id @default(cuid())
+  companyId      String        @map("company_id")
+  title          String
+  description    String
+  tags           String[]      @default([])
+  publishStatus  PublishStatus @default(INTERNAL) @map("publish_status")
+  isConfidential Boolean       @default(false) @map("is_confidential")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  company      Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  profileItems CapabilityProfileItem[]
+
+  @@index([companyId, publishStatus, isConfidential])
+  @@map("services")
+}
+
+// ─── Projects ────────────────────────────────────────────
+
+model Project {
+  id             String        @id @default(cuid())
+  companyId      String        @map("company_id")
+  title          String
+  slug           String        @unique
+  client         String?
+  location       String
+  sectorTags     String[]      @default([]) @map("sector_tags")
+  completionYear Int           @map("completion_year")
+  budgetBand     BudgetBand    @default(FROM_1M_TO_10M) @map("budget_band")
+  scopeSummary   String        @map("scope_summary")
+  caseStudy      String?       @map("case_study")
+  heroImageUrl   String?       @map("hero_image_url")
+  publishStatus  PublishStatus @default(INTERNAL) @map("publish_status")
+  isConfidential Boolean       @default(false) @map("is_confidential")
+  description    String?
+  features       String[]      @default([])
+  isFeatured     Boolean       @default(false) @map("is_featured")
+  isSpotlight    Boolean       @default(false) @map("is_spotlight")
+  viewCount      Int           @default(0) @map("view_count")
+  featuredAt     DateTime?     @map("featured_at")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  company             Company                      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  profileItems        CapabilityProfileItem[]
+  stakeholders        ProjectStakeholder[]
+  mediaItems          ProjectMedia[]
+  credits             ProjectCredit[]
+  personalExperiences PersonalProjectExperience[]
+  caseStudies         ProjectCaseStudy[]
+
+  @@index([companyId, publishStatus, isConfidential])
+  @@index([isFeatured])
+  @@index([viewCount])
+  @@map("projects")
+}
+
+model ProjectStakeholder {
+  id          String          @id @default(cuid())
+  projectId   String          @map("project_id")
+  role        StakeholderRole
+  name        String
+  companyName String?         @map("company_name")
+  createdAt   DateTime        @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, role])
+  @@map("project_stakeholders")
+}
+
+model ProjectMedia {
+  id        String           @id @default(cuid())
+  projectId String           @map("project_id")
+  mediaType ProjectMediaType @map("media_type")
+  url       String
+  caption   String?
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_media")
+}
+
+model ProjectCredit {
+  id                String             @id @default(cuid())
+  projectId         String             @map("project_id")
+  roleCategory      CreditRoleCategory @map("role_category")
+  tradeGroup        String?            @map("trade_group")
+  entityType        CreditEntityType   @map("entity_type")
+  entityName              String             @map("entity_name")
+  linkedCompanySlug       String?            @map("linked_company_slug")
+  isVerified              Boolean            @default(false) @map("is_verified")
+  linkedPersonalProfileId String?            @map("linked_personal_profile_id")
+  sortOrder               Int                @default(100) @map("sort_order")
+  createdAt               DateTime           @default(now()) @map("created_at")
+
+  project               Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  linkedPersonalProfile PersonalProfile? @relation(fields: [linkedPersonalProfileId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, roleCategory, sortOrder])
+  @@index([linkedCompanySlug])
+  @@index([linkedPersonalProfileId])
+  @@map("project_credits")
+}
+
+// ─── Capability Profiles ─────────────────────────────────
+
+model CapabilityProfile {
+  id                  String            @id @default(cuid())
+  companyId           String            @map("company_id")
+  title               String
+  slug                String            @unique
+  introText           String            @default("") @map("intro_text")
+  visibility          ProfileVisibility @default(UNLISTED)
+  includeConfidential Boolean           @default(false) @map("include_confidential")
+  template            ProfileTemplate   @default(TEMPLATE_A)
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+
+  company Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  items   CapabilityProfileItem[]
+
+  @@index([companyId])
+  @@map("capability_profiles")
+}
+
+model CapabilityProfileItem {
+  id        String          @id @default(cuid())
+  profileId String          @map("profile_id")
+  itemType  ProfileItemType @map("item_type")
+  serviceId String?         @map("service_id")
+  projectId String?         @map("project_id")
+  sortOrder Int             @default(0) @map("sort_order")
+
+  profile CapabilityProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  service Service?          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  project Project?          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, sortOrder])
+  @@index([serviceId])
+  @@index([projectId])
+  @@map("capability_profile_items")
+}
+
+// ─── Personal Profiles ───────────────────────────────────
+
+model PersonalProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique @map("user_id")
+  fullName        String   @map("full_name")
+  slug            String   @unique
+  headline        String?
+  bio             String   @default("")
+  roleTitle       String?  @map("role_title")
+  location        String?
+  yearsExperience Int      @default(0) @map("years_experience")
+  education       String?
+  certificates    String[] @default([])
+  skills          String[] @default([])
+  profileImageUrl String?  @map("profile_image_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user               User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleExperiences    RoleExperience[]
+  projectExperiences PersonalProjectExperience[]
+  linkedCredits      ProjectCredit[]
+
+  @@map("personal_profiles")
+}
+
+model RoleExperience {
+  id                String   @id @default(cuid())
+  personalProfileId String   @map("personal_profile_id")
+  companyName       String   @map("company_name")
+  linkedCompanyId   String?  @map("linked_company_id")
+  roleTitle         String   @map("role_title")
+  startYear         Int      @map("start_year")
+  endYear           Int?     @map("end_year")
+  isCurrent         Boolean  @default(false) @map("is_current")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  personalProfile PersonalProfile @relation(fields: [personalProfileId], references: [id], onDelete: Cascade)
+  linkedCompany   Company?        @relation(fields: [linkedCompanyId], references: [id], onDelete: SetNull)
+
+  @@index([personalProfileId])
+  @@index([linkedCompanyId])
+  @@map("role_experiences")
+}
+
+model PersonalProjectExperience {
+  id                String   @id @default(cuid())
+  personalProfileId String   @map("personal_profile_id")
+  projectId         String?  @map("project_id")
+  projectName       String   @map("project_name")
+  roleTitle         String   @default("") @map("role_title")
+  contribution      String?
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  personalProfile PersonalProfile @relation(fields: [personalProfileId], references: [id], onDelete: Cascade)
+  project         Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([personalProfileId])
+  @@index([projectId])
+  @@map("personal_project_experiences")
+}
+
+// ─── Case Study Links ───────────────────────────────────
+
+model ProjectCaseStudy {
+  id          String   @id @default(cuid())
+  projectId   String   @map("project_id")
+  companyId   String   @map("company_id")
+  title       String
+  url         String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([companyId])
+  @@map("project_case_studies")
+}
+
+// ─── Articles ───────────────────────────────────────────
+
+model Article {
+  id           String        @id @default(cuid())
+  title        String
+  slug         String        @unique
+  excerpt      String
+  body         String
+  heroImageUrl String?       @map("hero_image_url")
+  authorName   String        @map("author_name")
+  status       ArticleStatus @default(DRAFT)
+  tags         String[]      @default([])
+  publishedAt  DateTime?     @map("published_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@index([status, publishedAt])
+  @@map("articles")
+}
