@@ -6,8 +6,13 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL!;
+  const isNeon = connectionString.includes("neon.tech");
+
   const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
+    connectionString,
+    // Neon requires SSL — explicit config for serverless runtimes (Vercel)
+    ...(isNeon ? { ssl: { rejectUnauthorized: false } } : {}),
   });
   return new PrismaClient({
     adapter,
