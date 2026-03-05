@@ -18,28 +18,7 @@ import { ProjectCard } from "@/components/shared/project-card";
 import { CompanyCard } from "@/components/shared/company-card";
 import { FeaturedCarousel } from "@/components/home/featured-carousel";
 import { budgetBandLabel } from "@/lib/project-details";
-
-const LOCATIONS = [
-  "Sydney",
-  "Melbourne",
-  "Brisbane",
-  "Perth",
-  "Adelaide",
-  "Gold Coast",
-  "Auckland",
-  "London",
-];
-
-const SECTORS = [
-  "Commercial",
-  "Residential",
-  "Infrastructure",
-  "Health",
-  "Education",
-  "Industrial",
-  "Community",
-  "Mixed-Use",
-];
+import { LOCATIONS, SECTORS } from "@/lib/search-constants";
 
 export default async function HomePage() {
   const [
@@ -322,7 +301,10 @@ export default async function HomePage() {
               </h3>
               <div className="flex flex-wrap gap-2">
                 {LOCATIONS.map((loc) => (
-                  <Link key={loc} href={`/search?q=${encodeURIComponent(loc)}`}>
+                  <Link
+                    key={loc}
+                    href={`/search?type=projects&location=${encodeURIComponent(loc)}`}
+                  >
                     <Badge
                       variant="outline"
                       className="cursor-pointer hover:bg-foreground hover:text-background transition-colors px-3 py-1"
@@ -341,7 +323,7 @@ export default async function HomePage() {
                 {SECTORS.map((sector) => (
                   <Link
                     key={sector}
-                    href={`/search?q=${encodeURIComponent(sector)}`}
+                    href={`/search?type=projects&sector=${encodeURIComponent(sector)}`}
                   >
                     <Badge
                       variant="outline"
