@@ -135,38 +135,54 @@ interface SeedLocation {
   state: string;
   country: string;
   label: string;
+  lat: number;
+  lng: number;
 }
 
 const AU_LOCATIONS: SeedLocation[] = [
-  { suburb: "Sydney", state: "NSW", country: "AU", label: "Sydney, NSW" },
-  { suburb: "Melbourne", state: "VIC", country: "AU", label: "Melbourne, VIC" },
-  { suburb: "Brisbane", state: "QLD", country: "AU", label: "Brisbane, QLD" },
-  { suburb: "Perth", state: "WA", country: "AU", label: "Perth, WA" },
-  { suburb: "Adelaide", state: "SA", country: "AU", label: "Adelaide, SA" },
-  { suburb: "Gold Coast", state: "QLD", country: "AU", label: "Gold Coast, QLD" },
-  { suburb: "Hobart", state: "TAS", country: "AU", label: "Hobart, TAS" },
-  { suburb: "Canberra", state: "ACT", country: "AU", label: "Canberra, ACT" },
+  { suburb: "Sydney", state: "NSW", country: "AU", label: "Sydney, NSW", lat: -33.8688, lng: 151.2093 },
+  { suburb: "Melbourne", state: "VIC", country: "AU", label: "Melbourne, VIC", lat: -37.8136, lng: 144.9631 },
+  { suburb: "Brisbane", state: "QLD", country: "AU", label: "Brisbane, QLD", lat: -27.4705, lng: 153.0260 },
+  { suburb: "Perth", state: "WA", country: "AU", label: "Perth, WA", lat: -31.9505, lng: 115.8605 },
+  { suburb: "Adelaide", state: "SA", country: "AU", label: "Adelaide, SA", lat: -34.9285, lng: 138.6007 },
+  { suburb: "Gold Coast", state: "QLD", country: "AU", label: "Gold Coast, QLD", lat: -28.0167, lng: 153.4000 },
+  { suburb: "Hobart", state: "TAS", country: "AU", label: "Hobart, TAS", lat: -42.8821, lng: 147.3272 },
+  { suburb: "Canberra", state: "ACT", country: "AU", label: "Canberra, ACT", lat: -35.2809, lng: 149.1300 },
 ];
 
 const NZ_LOCATIONS: SeedLocation[] = [
-  { suburb: "Auckland", state: "", country: "NZ", label: "Auckland, NZ" },
-  { suburb: "Wellington", state: "", country: "NZ", label: "Wellington, NZ" },
+  { suburb: "Auckland", state: "", country: "NZ", label: "Auckland, NZ", lat: -36.8485, lng: 174.7633 },
+  { suburb: "Wellington", state: "", country: "NZ", label: "Wellington, NZ", lat: -41.2924, lng: 174.7787 },
 ];
 const UK_LOCATIONS: SeedLocation[] = [
-  { suburb: "London", state: "", country: "UK", label: "London, UK" },
-  { suburb: "Manchester", state: "", country: "UK", label: "Manchester, UK" },
+  { suburb: "London", state: "", country: "UK", label: "London, UK", lat: 51.5074, lng: -0.1278 },
+  { suburb: "Manchester", state: "", country: "UK", label: "Manchester, UK", lat: 53.4808, lng: -2.2426 },
 ];
 const US_LOCATIONS: SeedLocation[] = [
-  { suburb: "Los Angeles", state: "", country: "USA", label: "Los Angeles, USA" },
-  { suburb: "New York", state: "", country: "USA", label: "New York, USA" },
+  { suburb: "Los Angeles", state: "", country: "USA", label: "Los Angeles, USA", lat: 34.0522, lng: -118.2437 },
+  { suburb: "New York", state: "", country: "USA", label: "New York, USA", lat: 40.7128, lng: -74.0060 },
 ];
 
 function randomProjectLocation(): SeedLocation {
   const r = Math.random();
-  if (r < 0.70) return pick(AU_LOCATIONS);
-  if (r < 0.80) return pick(NZ_LOCATIONS);
-  if (r < 0.90) return pick(UK_LOCATIONS);
-  return pick(US_LOCATIONS);
+  let loc: SeedLocation;
+  if (r < 0.70) loc = pick(AU_LOCATIONS);
+  else if (r < 0.80) loc = pick(NZ_LOCATIONS);
+  else if (r < 0.90) loc = pick(UK_LOCATIONS);
+  else loc = pick(US_LOCATIONS);
+  // Add small random offset so markers don't stack exactly
+  return {
+    ...loc,
+    lat: loc.lat + (Math.random() - 0.5) * 0.08,
+    lng: loc.lng + (Math.random() - 0.5) * 0.08,
+  };
+}
+
+const ALL_SEED_LOCATIONS = [...AU_LOCATIONS, ...NZ_LOCATIONS, ...UK_LOCATIONS, ...US_LOCATIONS];
+
+function lookupCoords(suburb: string): { lat: number; lng: number } | null {
+  const loc = ALL_SEED_LOCATIONS.find((l) => l.suburb === suburb);
+  return loc ? { lat: loc.lat, lng: loc.lng } : null;
 }
 
 // ─── Trade-to-Company Slug Mapping ───────────────────────
@@ -503,6 +519,7 @@ async function main() {
 
   for (const def of COMPANIES) {
     const slug = slugify(def.name);
+    const coords = lookupCoords(def.suburb);
     const company = await prisma.company.create({
       data: {
         name: def.name,
@@ -511,6 +528,8 @@ async function main() {
         suburb: def.suburb,
         state: def.state,
         country: def.country,
+        latitude: coords?.lat,
+        longitude: coords?.lng,
         primaryColor: def.primaryColor,
         sectors: def.sectors,
         trades: def.trades,
@@ -606,6 +625,8 @@ async function main() {
           suburb: loc.suburb,
           state: loc.state,
           country: loc.country,
+          latitude: loc.lat,
+          longitude: loc.lng,
           sectorTags: template.sectorTags,
           completionYear,
           budgetBand: pick(budgetBands),
