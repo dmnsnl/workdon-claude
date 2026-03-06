@@ -72,6 +72,7 @@ export async function createProjectAction(
     data: {
       companyId: auth.company.id,
       ...result.data,
+      heroImageUrl: result.data.heroImageUrl || null,
     },
   });
 
@@ -152,7 +153,10 @@ export async function updateProjectAction(
 
   await prisma.project.update({
     where: { id: projectId },
-    data: result.data,
+    data: {
+      ...result.data,
+      heroImageUrl: result.data.heroImageUrl || null,
+    },
   });
 
   redirect("/app/projects");

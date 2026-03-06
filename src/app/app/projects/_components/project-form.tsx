@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ImageUpload } from "@/components/shared/image-upload";
 
 type Props = {
   action: (
@@ -228,16 +229,11 @@ export function ProjectForm({
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="heroImageUrl">Hero image URL (optional)</Label>
-            <Input
-              id="heroImageUrl"
-              name="heroImageUrl"
-              type="url"
-              defaultValue={project?.heroImageUrl ?? ""}
-              placeholder="https://..."
-            />
-          </div>
+          <ImageUpload
+            name="heroImageUrl"
+            label="Hero image"
+            defaultValue={project?.heroImageUrl}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="publishStatus">Visibility</Label>

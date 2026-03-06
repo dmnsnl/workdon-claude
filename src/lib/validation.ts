@@ -24,6 +24,7 @@ export const personalRegistrationSchema = z.object({
 export const companySettingsSchema = z.object({
   name: z.string().min(2).max(200),
   description: z.string().max(5000).optional(),
+  logoUrl: z.url().optional().or(z.literal("")),
   website: z.url().optional().or(z.literal("")),
   phone: z.string().max(30).optional(),
   email: z.email().optional().or(z.literal("")),

@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ImageUpload } from "@/components/shared/image-upload";
 
 type Props = {
   company: Company;
@@ -62,6 +63,13 @@ export function SettingsForm({ company }: Props) {
               placeholder="Tell people about your company..."
             />
           </div>
+
+          <ImageUpload
+            name="logoUrl"
+            label="Company logo"
+            defaultValue={company.logoUrl}
+            previewHeight="h-32"
+          />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">

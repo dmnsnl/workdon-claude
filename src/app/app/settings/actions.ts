@@ -21,6 +21,7 @@ export async function updateSettingsAction(
   const raw = {
     name: formString(formData, "name"),
     description: formString(formData, "description") || undefined,
+    logoUrl: formString(formData, "logoUrl") || undefined,
     website: formString(formData, "website") || undefined,
     phone: formString(formData, "phone") || undefined,
     email: formString(formData, "email") || undefined,
@@ -44,9 +45,15 @@ export async function updateSettingsAction(
     return { errors: fieldErrors };
   }
 
+  // Explicitly set logoUrl to null when cleared (otherwise undefined skips the field)
+  const data = {
+    ...result.data,
+    logoUrl: result.data.logoUrl || null,
+  };
+
   await prisma.company.update({
     where: { id: auth.company.id },
-    data: result.data,
+    data,
   });
 
   revalidatePath("/app/settings");
