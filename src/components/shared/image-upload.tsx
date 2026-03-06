@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -48,11 +47,17 @@ export function ImageUpload({
     setUploading(true);
 
     try {
-      const blob = await upload(file.name, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
-      setUrl(blob.url);
+      const body = new FormData();
+      body.append("file", file);
+
+      const res = await fetch("/api/upload", { method: "POST", body });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Upload failed.");
+      }
+
+      setUrl(data.url);
     } catch (err) {
       setError((err as Error).message || "Upload failed.");
     } finally {

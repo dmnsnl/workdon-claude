@@ -1,38 +1,46 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+const ALLOWED_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/svg+xml",
+]);
+
+const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
-
   try {
-    const origin = new URL(request.url).origin;
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
-    const jsonResponse = await handleUpload({
-      body,
-      request,
-      onBeforeGenerateToken: async (_pathname) => {
-        return {
-          allowedContentTypes: [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/gif",
-            "image/svg+xml",
-          ],
-          maximumSizeInBytes: 10 * 1024 * 1024, // 10 MB
-          callbackUrl: `${origin}/api/upload`,
-        };
-      },
-      onUploadCompleted: async () => {},
-    });
+    if (!file) {
+      return NextResponse.json({ error: "No file provided." }, { status: 400 });
+    }
 
-    return NextResponse.json(jsonResponse);
+    if (!ALLOWED_TYPES.has(file.type)) {
+      return NextResponse.json(
+        { error: "File type not allowed. Use JPEG, PNG, WebP, GIF, or SVG." },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json(
+        { error: "File must be under 10 MB." },
+        { status: 400 }
+      );
+    }
+
+    const blob = await put(file.name, file, { access: "public" });
+
+    return NextResponse.json({ url: blob.url });
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }
