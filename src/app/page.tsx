@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/shared/site-footer";
 import { ProjectCard } from "@/components/shared/project-card";
 import { CompanyCard } from "@/components/shared/company-card";
 import { FeaturedCarousel } from "@/components/home/featured-carousel";
+import { HeroSection } from "@/components/home/hero-section";
 import { budgetBandLabel } from "@/lib/project-details";
 import { LOCATIONS, SECTORS } from "@/lib/search-constants";
 import { formatLocationShort } from "@/lib/location";
@@ -30,6 +31,9 @@ export default async function HomePage() {
     trendingCompanies,
     trendingPeople,
     articles,
+    projectCount,
+    companyCount,
+    peopleCount,
   ] = await Promise.all([
     // Featured carousel projects
     prisma.project.findMany({
@@ -96,59 +100,66 @@ export default async function HomePage() {
       orderBy: { publishedAt: "desc" },
       take: 4,
     }),
+    // Counts for hero stats
+    prisma.project.count({
+      where: { publishStatus: "PUBLIC", isConfidential: false },
+    }),
+    prisma.company.count(),
+    prisma.personalProfile.count(),
   ]);
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      {/* Search Hero */}
-      <section className="border-b bg-muted/30 py-16 text-center">
-        <div className="mx-auto max-w-2xl px-4">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            WorkdOn
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Discover construction projects, companies, and the people behind
-            them. Australia&rsquo;s construction industry credits &amp; showcase
-            platform.
-          </p>
-          <div className="mt-6 flex items-center justify-center gap-3">
-            <Button asChild size="lg">
-              <Link href="/search">Browse projects</Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link href="/register">Register your business</Link>
-            </Button>
-          </div>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <Link href="/search?type=projects">
-              <Badge
-                variant="outline"
-                className="cursor-pointer hover:bg-foreground hover:text-background transition-colors"
-              >
-                Projects
-              </Badge>
-            </Link>
-            <Link href="/search?type=companies">
-              <Badge
-                variant="outline"
-                className="cursor-pointer hover:bg-foreground hover:text-background transition-colors"
-              >
-                Companies
-              </Badge>
-            </Link>
-            <Link href="/search?type=people">
-              <Badge
-                variant="outline"
-                className="cursor-pointer hover:bg-foreground hover:text-background transition-colors"
-              >
-                People
-              </Badge>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero */}
+      <HeroSection
+        featuredProject={
+          featuredProjects[0]
+            ? {
+                slug: featuredProjects[0].slug,
+                title: featuredProjects[0].title,
+                heroImageUrl: featuredProjects[0].heroImageUrl,
+                suburb: featuredProjects[0].suburb,
+                state: featuredProjects[0].state,
+                country: featuredProjects[0].country,
+                sectorTags: featuredProjects[0].sectorTags,
+                budgetBand: featuredProjects[0].budgetBand,
+                companyName: featuredProjects[0].company.name,
+              }
+            : null
+        }
+        secondProject={
+          featuredProjects[1]
+            ? {
+                slug: featuredProjects[1].slug,
+                title: featuredProjects[1].title,
+                heroImageUrl: featuredProjects[1].heroImageUrl,
+                suburb: featuredProjects[1].suburb,
+                state: featuredProjects[1].state,
+                country: featuredProjects[1].country,
+                sectorTags: featuredProjects[1].sectorTags,
+                budgetBand: featuredProjects[1].budgetBand,
+                companyName: featuredProjects[1].company.name,
+              }
+            : null
+        }
+        article={
+          articles[0]
+            ? {
+                slug: articles[0].slug,
+                title: articles[0].title,
+                heroImageUrl: articles[0].heroImageUrl,
+                authorName: articles[0].authorName,
+              }
+            : null
+        }
+        avatarPeople={trendingPeople.slice(0, 5).map((p) => ({
+          fullName: p.fullName,
+          profileImageUrl: p.profileImageUrl,
+        }))}
+        stats={{ projectCount, companyCount, peopleCount }}
+      />
 
       <main className="mx-auto max-w-6xl px-4 py-12 space-y-16">
         {/* Featured Carousel */}
